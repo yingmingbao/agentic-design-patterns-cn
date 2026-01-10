@@ -76,7 +76,7 @@ Exception Handling and Recovery is critical for any agent deployed in a real-wor
 
 In short, this pattern is fundamental for building agents that are not only intelligent but also reliable, resilient, and user-friendly in the face of real-world complexities.
 
-<mark>简而言之，要构建一个不仅智能，还能在面对现实世界的复杂性时，能够可靠、有韧性且用户友好的智能体，该模式就其基础。</mark>
+<mark>简而言之，要构建一个不仅智能，还能在面对现实世界的复杂性时，能够可靠、有韧性且用户友好的智能体，该模式就是其基础。</mark>
 
 # Hands-On Code Example (ADK) | <mark>使用 ADK 的实战代码</mark>
 
@@ -147,7 +147,7 @@ Why: The Exception Handling and Recovery pattern provides a standardized solutio
 
 Rule of thumb: Use this pattern for any AI agent deployed in a dynamic, real-world environment where system failures, tool errors, network issues, or unpredictable inputs are possible and operational reliability is a key requirement.
 
-<mark><strong>经验法则：</strong>本模式适用于任何部署在动态、真实世界环境中的 AI 智能体，特别是当这些场景中可能遭遇系统故障、工具错误、网络问题或不可预测的输入，且对操作可靠性有关键要求时。</mark>
+<mark><strong>经验法则：</strong>本模式适用于任何部署在动态、真实世界环境中的 AI 智能体，特别是当这些场景可能遭遇系统故障、工具错误、网络问题或不可预测的输入，且对操作可靠性有关键要求时。</mark>
 
 # Visual Summary | <mark>可视化总结</mark>
 
