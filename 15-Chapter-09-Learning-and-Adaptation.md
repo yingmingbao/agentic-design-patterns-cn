@@ -176,7 +176,7 @@ Szummer , Laurence Aitchison)
 
 SICA's architecture comprises a foundational toolkit for basic file operations, command execution, and arithmetic calculations. It includes mechanisms for result submission and the invocation of specialized sub-agents (coding, problem-solving, and reasoning). These sub-agents decompose complex tasks and manage the LLM's context length, especially during extended improvement cycles.
 
-<mar模型>SICA 的架构包含基本文件操作、命令执行和算术计算的基础工具包。它提供结果提交机制和专用子智能体（编码、问题解决和推理）的调用接口。这些子智能体负责分解复杂任务并管理大语言模型的上下文长度，特别是在长时间的改进周期中。</mar模型
+<mark>SICA 的架构包含基本文件操作、命令执行和算术计算的基础工具包。它提供结果提交机制和专用子智能体（编码、问题解决和推理）的调用接口。这些子智能体负责分解复杂任务并管理大语言模型的上下文长度，特别是在长时间的改进周期中。</mark>
 
 An asynchronous overseer, another LLM, monitors SICA's behavior, identifying potential issues such as loops or stagnation. It communicates with SICA and can intervene to halt execution if necessary. The overseer receives a detailed report of SICA's actions, including a callgraph and a log of messages and tool actions, to identify patterns and inefficiencies.
 
@@ -264,23 +264,23 @@ for name, value in best_program.metrics.items():
 
 ---
 
-## At a Glance | <mark>快速概览</mark>
+## At a Glance | <mark>要点速览</mark>
 
 **What**: AI agents often operate in dynamic and unpredictable environments where pre-programmed logic is insufficient. Their performance can degrade when faced with novel situations not anticipated during their initial design. Without the ability to learn from experience, agents cannot optimize their strategies or personalize their interactions over time. This rigidity limits their effectiveness and prevents them from achieving true autonomy in complex, real-world scenarios.
 
-<mark><strong>问题背景</strong>：AI 智能体往往需要在动态多变且不可预测的环境中运行，仅靠预先编程的逻辑难以应对所有场景。当遭遇设计之初未曾预见的新情况时，其性能会显著下降。若缺乏从经验中学习的能力，智能体便无法优化自身策略或实现个性化交互。这种僵化特性严重制约了它们的适用性，使其难以在复杂的真实世界场景中展现真正的自主智能。</mark>
+<mark><strong>问题所在：</strong> AI 智能体往往需要在动态多变且不可预测的环境中运行，仅靠预先编程的逻辑难以应对所有场景。当遭遇设计之初未曾预见的新情况时，其性能会显著下降。若缺乏从经验中学习的能力，智能体便无法优化自身策略或实现个性化交互。这种僵化特性严重制约了它们的适用性，使其难以在复杂的真实世界场景中展现真正的自主智能。</mark>
 
 **Why**: The standardized solution is to integrate learning and adaptation mechanisms, transforming static agents into dynamic, evolving systems. This allows an agent to autonomously refine its knowledge and behaviors based on new data and interactions. Agentic systems can use various methods, from reinforcement learning to more advanced techniques like self-modification, as seen in the Self-Improving Coding Agent (SICA). Advanced systems like Google's AlphaEvolve leverage LLMs and evolutionary algorithms to discover entirely new and more efficient solutions to complex problems. By continuously learning, agents can master new tasks, enhance their performance, and adapt to changing conditions without requiring constant manual reprogramming.
 
-<mark><strong>解决方案</strong>：业界的标准做法是为智能体集成学习与适应机制，将其从静态系统改造为可动态演进的智能体。这使得智能体能够根据新获取的数据和交互经验，自主优化自身的知识库和行为模式。实现路径多样，既包括经典的强化学习方法，也涵盖更前沿的自我修改技术——如本章介绍的自我改进编码智能体（SICA）。像 Google AlphaEvolve 这样的先进系统，通过融合大语言模型与进化算法，能够自主发现全新且高效的复杂问题解决方案。具备持续学习能力的智能体，可以不断掌握新技能、提升任务表现、适应环境变化，而无需频繁的人工重新编程。</mark>
+<mark><strong>解决之道：</strong> 业界的标准做法是为智能体集成学习与适应机制，将其从静态系统改造为可动态演进的智能体。这使得智能体能够根据新获取的数据和交互经验，自主优化自身的知识库和行为模式。实现路径多样，既包括经典的强化学习方法，也涵盖更前沿的自我修改技术——如本章介绍的自我改进编码智能体（SICA）。像 Google AlphaEvolve 这样的先进系统，通过融合大语言模型与进化算法，能够自主发现全新且高效的复杂问题解决方案。具备持续学习能力的智能体，可以不断掌握新技能、提升任务表现、适应环境变化，而无需频繁的人工重新编程。</mark>
 
 **Rule of thumb**: Use this pattern when building agents that must operate in dynamic, uncertain, or evolving environments. It is essential for applications requiring personalization, continuous performance improvement, and the ability to handle novel situations autonomously.
 
-<mark><strong>应用场景</strong>：当构建需要在动态多变、充满不确定性或持续演进的环境中运行的智能体时，应采用本模式。该模式对于那些要求个性化服务、持续性能优化以及自主应对新场景的应用系统尤为关键。</mark>
+<mark><strong>经验法则：</strong> 当构建需要在动态多变、充满不确定性或持续演进的环境中运行的智能体时，应采用本模式。该模式对于那些要求个性化服务、持续性能优化以及自主应对新场景的应用系统尤为关键。</mark>
 
 ---
 
-## Visual Summary | <mark>视觉摘要</mark>
+## Visual Summary | <mark>可视化总结</mark>
 
 **[Visual summary diagram would be inserted here]**
 
