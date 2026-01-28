@@ -66,8 +66,8 @@ This project is a **bilingual Chinese-English translation** of "Agentic Design P
 | 章节 | 设计模式概述 | 负责人 | AI 翻译 | 人工评审 | 交叉评审 |
 |------|-------------|--------|---------|----------|----------|
 | [第 8 章：记忆管理](14-Chapter-08-Memory-Management.md) | 短期和长期记忆管理，维持上下文连续性 | @郑涛 | ✅ | ✅ | ✅ |
-| [第 9 章：学习与适应](15-Chapter-09-Learning-and-Adaptation.md) | 从经验中学习，持续优化智能体行为 | @陈诗中 | ⏳ | ❌ | ❌ |
-| [第 10 章：模型上下文协议](16-Chapter-10-Model-Context-Protocol.md) | 标准化交互协议，规范智能体通信方式 | @郑涛 | ⏳ | ❌ | ❌ |
+| [第 9 章：学习与适应](15-Chapter-09-Learning-and-Adaptation.md) | 从经验中学习，持续优化智能体行为 | @陈诗中 | ✅ | ✅ | ✅ |
+| [第 10 章：模型上下文协议](16-Chapter-10-Model-Context-Protocol.md) | 标准化交互协议，规范智能体通信方式 | @郑涛 | ✅ | ✅ | ✅ |
 | [第 11 章：目标设定与监控](17-Chapter-11-Goal-Setting-and-Monitoring.md) | 动态目标管理，实时追踪任务进展 | [@李浪溪](https://github.com/seabornlee) | ✅ | ✅ | ⏳ |
 
 ### 第三部分：集成设计模式 | Part Three: Integration Patterns (34 页)

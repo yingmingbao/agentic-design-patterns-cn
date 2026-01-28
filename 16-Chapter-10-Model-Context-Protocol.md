@@ -2,7 +2,7 @@
 
 To enable LLMs to function effectively as agents, their capabilities must extend beyond multimodal generation. Interaction with the external environment is necessary, including access to current data, utilization of external software, and execution of specific operational tasks. The Model Context Protocol (MCP) addresses this need by providing a standardized interface for LLMs to interface with external resources. This protocol serves as a key mechanism to facilitate consistent and predictable integration.
 
-<mark>要让大语言模型（LLM）成为高效的智能体，仅具备多模态生成能力是不够的。智能体还需要与外部环境交互，比如获取实时数据、调用外部软件、执行具体操作。模型上下文协议（Model Context Protocol，MCP）正是为此而生，它为 LLM 与外部资源的交互提供了标准化接口，是实现一致、可预测集成的关键机制。</mark>
+<mark>要让大语言模型成为高效的智能体，仅具备多模态生成能力是不够的。智能体还需要与外部环境交互，比如获取实时数据、调用外部软件、执行具体操作。模型上下文协议（MCP）正是为此而生，它为大语言模型与外部资源的交互提供了标准化接口，是实现一致、可预测集成的关键机制。</mark>
 
 ------
 
@@ -10,7 +10,7 @@ To enable LLMs to function effectively as agents, their capabilities must extend
 
 Imagine a universal adapter that allows any LLM to plug into any external system, database, or tool without a custom integration for each one. That's essentially what the Model Context Protocol (MCP) is. It's an open standard designed to standardize how LLMs like Gemini, OpenAI's GPT models, Mixtral, and Claude communicate with external applications, data sources, and tools. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
 
-<mark>想象一个通用适配器，能让任何大语言模型（LLM）轻松接入各种外部系统、数据库或工具，而无需为每个系统单独开发定制方案，这正是 MCP 的核心价值。MCP 是一个开放标准，统一规范了 Gemini、OpenAI GPT、Mixtral 和 Claude 等主流大语言模型与外部应用、数据源、工具之间的通信方式。可以将它理解为通用连接机制，极大简化了大语言模型获取上下文、执行操作、与系统交互的过程。</mark>
+<mark>想象一个通用适配器，能让任何大语言模型轻松接入各种外部系统、数据库或工具，而无需为每个系统单独开发定制方案——这正是 MCP 的核心价值。MCP 是一个开放标准，统一规范了 Gemini、OpenAI GPT、Mixtral 和 Claude 等主流大语言模型与外部应用、数据源、工具之间的通信方式。可以将它理解为通用连接机制，极大简化了大语言模型获取上下文、执行操作、与系统交互的过程。</mark>
 
 MCP operates on a client-server architecture. It defines how different elements—data (referred to as resources), interactive templates (which are essentially prompts), and actionable functions (known as tools)—are exposed by an MCP server. These are then consumed by an MCP client, which could be an LLM host application or an AI agent itself. This standardized approach dramatically reduces the complexity of integrating LLMs into diverse operational environments.
 
@@ -84,7 +84,7 @@ In short, function calling provides direct access to a few specific functions, w
 
 While MCP presents a powerful framework, a thorough evaluation requires considering several crucial aspects that influence its suitability for a given use case. Let's see some aspects in more details:
 
-<mark>虽然 MCP 框架提供了强大的功能，但要在特定场景中充分评估其适用性，我们还需要考虑几个关键因素。让我们来详细了解一下这些方面：</mark>
+<mark>虽然 MCP 提供了强大的功能，但要在特定场景中充分评估其适用性，还需要考虑几个关键因素。下面我们来详细了解这些方面：</mark>
 
 - **Tool vs. Resource vs. Prompt:** It's important to understand the specific roles of these components. A resource is static data (e.g., a PDF file, a database record). A tool is an executable function that performs an action (e.g., sending an email, querying an API). A prompt is a template that guides the LLM in how to interact with a resource or tool, ensuring the interaction is structured and effective.
 
@@ -168,7 +168,7 @@ The interaction flows as follows:
 
 MCP significantly broadens AI/LLM capabilities, making them more versatile and powerful. Here are nine key use cases:
 
-<mark>MCP 极大地拓展了 AI 和大语言模型的应用范围，使其更加灵活强大。以下是九个典型应用场景：</mark>
+<mark>MCP 极大拓展了 AI 和大语言模型的应用范围，使其更加灵活强大。以下是九个典型应用场景：</mark>
 
 - **Database Integration:** MCP allows LLMs and agents to seamlessly access and interact with structured data in databases. For instance, using the MCP Toolbox for Databases, an agent can query Google BigQuery datasets to retrieve real-time information, generate reports, or update records, all driven by natural language commands.
 
@@ -326,7 +326,7 @@ Once the MCP Server is created, the next step is to connect to it.
 
 To begin, execute 'adk web'. Navigate to the parent directory of mcp_agent (e.g., adk_agent_samples) in your terminal and run:
 
-<mark>首先，执行「adk web」。在终端中导航到 <code>mcp_agent</code> 的父目录（例如 <code>adk_agent_samples</code>）并运行：</mark>
+<mark>首先执行 <code>adk web</code> 命令。在终端中导航到 <code>mcp_agent</code> 的父目录（例如 <code>adk_agent_samples</code>）并运行：</mark>
 
 ```bash
 cd ./adk_agent_samples # Or your equivalent parent directory

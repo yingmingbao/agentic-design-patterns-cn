@@ -16,7 +16,7 @@ In agent systems, memory refers to an agent's ability to retain and utilize info
 
 <mark>上下文窗口的容量有限，限制了智能体可直接访问的近期信息范围。高效的短期记忆管理需要在有限空间内选择性地保留最相关信息，可通过总结旧对话片段或强调关键细节等技术实现。</mark>
 
-<mark>具有「长上下文」窗口的模型虽然扩大了短期记忆容量，允许在单次交互中保存更多信息，但这种上下文仍然是短暂的，会话结束后即丢失，且每次处理成本高昂、效率较低。</mark>
+<mark>具有「长上下文」窗口的模型虽然扩大了短期记忆容量，允许在单次交互中保存更多信息，但这种上下文仍然是临时的，会话结束后即丢失，且每次处理成本高昂、效率较低。</mark>
 
 <mark>因此，智能体需要不同类型的记忆来实现真正的持久化，从过往交互中回忆信息并构建持久的知识库。</mark>
 
@@ -296,8 +296,7 @@ def log_user_login(tool_context: ToolContext) -> dict:
   
    return {
        "status": "success",
-       "message": f"User login tracked. Total logins:
-{login_count}."
+       "message": f"User login tracked. Total logins: {login_count}."
    }
 
 # --- 使用演示 ---
@@ -440,6 +439,8 @@ history.add_ai_message("Great! It's a fantastic city.")
 print(history.messages)
 ```
 
+> 新版本 `langchain > 1.0` 中 `from langchain.memory import ChatMessageHistory` 无法导入，如需可从 `from langchain_community.chat_message_histories.in_memory import ChatMessageHistory` 导入 `ChatMessageHistory` , 可参考 [`issues#1499`](https://github.com/langchain-ai/langchain/issues/1499#issuecomment-2034691706)
+
 **ConversationBufferMemory: Automated Memory for Chains.** For integrating memory directly into chains, ConversationBufferMemory is a common choice. It holds a buffer of the conversation and makes it available to your prompt. Its behavior can be customized with two key parameters:
 
 <mark><strong>ConversationBufferMemory：链的自动化记忆管理</strong> 若需将记忆功能直接集成到链中，<code>ConversationBufferMemory</code> 是更好的选择。它维护对话内容的缓冲区并提供给提示词。其行为可通过两个关键参数配置：</mark>
@@ -465,6 +466,8 @@ memory.save_context({"input": "What's the weather like?"}, {"output":
 # 将记忆加载为字符串
 print(memory.load_memory_variables({}))
 ```
+
+> 新版本 `langchain > 1.0` 中 `from langchain.memory import ConversationBufferMemory` (自 0.3.1 版本开始被标记为弃用, 在 1.0.0 版本中被完全移除) 无法导入，如需可修改为 `from langchain_classic.memory import ConversationBufferMemory` 导入 `ConversationBufferMemory`, 可参考 [`libs/langchain/langchain_classic/memory/buffer.py`](https://github.com/langchain-ai/langchain/blob/3ace4e36808220d6a1c5402691f5d37867521458/libs/langchain/langchain_classic/memory/buffer.py#L21), [`commit#4d1cfa4`](https://github.com/langchain-ai/langchain/commit/4d1cfa494ab3040698fcb8164fe860a7ef87f979); 由于源代码中使用 `@deprecated` 标记，运行结果会抛出 `Warning`
 
 Integrating this memory into an LLMChain allows the model to access the conversation's history and provide contextually relevant responses
 
@@ -497,12 +500,13 @@ conversation = LLMChain(llm=llm, prompt=prompt, memory=memory)
 # 4. 运行对话
 response = conversation.predict(question="I want to book a flight.")
 print(response)
-response = conversation.predict(question="My name is Sam, by the
-way.")
+response = conversation.predict(question="My name is Sam, by the way.")
 print(response)
 response = conversation.predict(question="What was my name again?")
 print(response)
 ```
+
+> 新版本 `langchain > 1.0` 中 `from langchain.chains import LLMChain` (自 0.1.17 版本开始被标记为弃用, 在 1.0.0 版本中被完全移除) `from langchain.prompts import PromptTemplate`  无法导入，如需可从 `langchain_classic.chains` 导入 `LLMChain`, 从 `langchain_classic.prompts` 或 `langchain_core.prompts` 导入 `PromptTemplate`, 可参考 [`commit#4d1cfa4`](https://github.com/langchain-ai/langchain/commit/4d1cfa494ab3040698fcb8164fe860a7ef87f979); 由于源代码中使用 `@deprecated` 标记，运行结果会抛出 `Warning`
 
 For improved effectiveness with chat models, it is recommended to use a structured list of message objects by setting `return_messages=True`.
 
@@ -542,6 +546,7 @@ print(response)
 response = conversation.predict(question="Do you remember my name?")
 print(response)
 ```
+> 新版本 `langchain > 1.0` 中 `from langchain.chains import LLMChain` (自 0.1.17 版本开始被标记为弃用, 在 1.0.0 版本中被完全移除) `from langchain.memory import ConversationBufferMemory` (自 0.1.170.3.1 版本开始被标记为弃用, 在 1.0.0 版本中被完全移除) 无法导入，如需可从 `langchain_classic.chains` `langchain_classic.memory` 导入 `LLMChain` `ConversationBufferMemory`, 可参考 [`commit#4d1cfa4`](https://github.com/langchain-ai/langchain/commit/4d1cfa494ab3040698fcb8164fe860a7ef87f979); 由于源代码中使用 `@deprecated` 标记，运行结果会抛出 `Warning`
 
 **Types of Long-Term Memory:** Long-term memory allows systems to retain information across different conversations, providing a deeper level of context and personalization. It can be broken down into three types analogous to human memory:
 
@@ -786,3 +791,4 @@ This chapter dove into the really important job of memory management for agent s
 3. Vertex AI Agent Engine Memory Bank: <https://cloud.google.com/blog/products/ai-machine-learning/vertex-ai-memory-bank-in-public-preview>
 
    <mark>Vertex AI 智能体引擎的 Memory Bank：<https://cloud.google.com/blog/products/ai-machine-learning/vertex-ai-memory-bank-in-public-preview></mark>
+
