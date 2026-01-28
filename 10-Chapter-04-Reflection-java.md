@@ -172,3 +172,88 @@ public class ReviewResult {
 进阶：如何增加“自我修正”？
 
 目前的流水线只到审查为止。如果要实现真正的闭环，可以增加一个判断逻辑：如果 status 是 INACCURATE，则把 reasoning 重新发给 DraftWriter 要求重写。
+
+
+# 核心实现：带反馈的自动化流水线
+
+## 1. 完善结构化对象
+首先，确保审查员能给出清晰的反馈，让作者知道哪里错了。
+``` java
+public record ReviewResult(
+    String status,    // "APPROVED" 或 "REJECTED"
+    String reasoning, // 具体的错误点
+    String suggestion // 改进建议
+) {}
+```
+
+
+## 2. 实现闭环控制逻辑
+通过 while 循环控制迭代次数，防止无限循环（Dead Loop）。
+
+``` java
+
+@Service
+public class SelfCorrectingPipeline {
+
+    private final ChatClient chatClient;
+
+    public SelfCorrectingPipeline(ChatClient.Builder builder) {
+        this.chatClient = builder.build();
+    }
+
+    public String runSmartWriter(String topic) {
+        String currentDraft = "";
+        String lastFeedback = "这是初次尝试，请自由发挥。";
+        int maxRetries = 3;
+        int attempt = 0;
+
+        while (attempt < maxRetries) {
+            attempt++;
+            System.out.printf("\n--- 第 %d 轮迭代 ---\n", attempt);
+
+            // 1. 生成者 (Writer): 根据反馈进行创作或修改
+            currentDraft = chatClient.prompt()
+                    .system("你是一个专业的文案专家。")
+                    .user(u -> u.text("主题：{topic}\n上次反馈：{feedback}")
+                            .param("topic", topic)
+                            .param("feedback", lastFeedback))
+                    .call()
+                    .content();
+
+            // 2. 审查者 (Reviewer): 结构化评估
+            ReviewResult review = chatClient.prompt()
+                    .system("你是一个极其挑剔的事实核查员，若内容有误必须打回重写。")
+                    .user("请审查以下内容：\n" + currentDraft)
+                    .call()
+                    .entity(ReviewResult.class); // 强类型解析
+
+            System.out.println("核查状态: " + review.status());
+
+            // 3. 逻辑判断
+            if ("APPROVED".equalsIgnoreCase(review.status())) {
+                System.out.println(">>> 审查通过！");
+                return currentDraft;
+            } else {
+                // 如果不通过，将建议存入 lastFeedback，进入下一次循环
+                lastFeedback = "修正建议: " + review.reasoning() + " | " + review.suggestion();
+                System.out.println(">>> 审查未通过，准备重写。原因: " + review.reasoning());
+            }
+        }
+
+        return "在达到最大迭代次数后，最终版本如下（可能仍存在瑕疵）：\n" + currentDraft;
+    }
+}
+```
+
+关键架构点解析:
+
+上下文的滚动传递： 在 while 循环中，lastFeedback 扮演了关键角色。它把上一次失败的原因作为下一次生成的输入。这正是 Agent 反思模式 的精髓。
+避免无限循环 (Guardrail)： 代码中设置了 maxRetries。这是生产级 AI 应用必须具备的，防止因为模型陷入逻辑死循环（例如作者和审查员意见始终不一）而耗尽 Token。
+状态与提示词分离： 在 Spring AI 中，利用 .param() 注入变量，可以保持 Prompt 模板的整洁，避免了 Python 中字符串拼接可能导致的格式混乱。
+
+## 3. 进阶：如何处理更复杂的逻辑？
+如果你的流水线包含更多步骤（例如：提取 -> 写作 -> 核查 -> 翻译），手动写 while 循环可能会变得混乱。这时，Spring 生态提供了更好的选择：
+
+Spring AI + State Machine：如果逻辑非常复杂，可以引入 Spring State Machine。
+
+Advisors（拦截器）：你可以编写一个自定义的 AroundAdvisor，在 writer 执行完后自动调用 reviewer，如果不达标则自动重新触发。
