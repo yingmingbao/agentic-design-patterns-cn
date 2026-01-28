@@ -101,3 +101,74 @@ public class ReflectionApp implements CommandLineRunner {
 降低幻觉：反思阶段强制模型以“审查者”视角观察输出，能有效发现第一遍生成时忽略的逻辑漏洞。
 
 Spring 的优势：在 Java 环境下，你可以很容易地在“反思阶段”加入真实的 Unit Test（单元测试） 结果。如果测试不通过，将报错信息反馈给 AI，这比纯文本反思更具杀伤力。
+
+
+
+# Spring AI Alibaba 实现：顺序审查流水线
+
+``` java
+
+import com.strategist.ai.patterns.reflection.dto.ReviewResult;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+
+@Component
+public class ReviewPipelineService {
+
+    @Resource
+    private final ChatClient chatClient;
+
+    public ReviewPipelineService(ChatClient.Builder builder) {
+        this.chatClient = builder.build();
+    }
+
+    public ReviewResult runWriteAndReview(String topic) {
+        // --- 1. 执行 DraftWriter (生成初稿) ---
+        String draftText = chatClient.prompt()
+                .system("你是一个专业的初稿撰写员，请写一段简短、信息丰富的主题段落。")
+                .user(topic)
+                .call()
+                .content();
+
+        System.out.println(">>> 初稿已生成: " + draftText);
+
+        // --- 2. 执行 FactChecker (事实核查并结构化输出) ---
+        // 我们直接将上一步的 draftText 传递给审查员
+        return chatClient.prompt()
+                .system("你是一名严谨的事实核查员。请核查用户提供的文本。")
+                .user("待核查文本：\n" + draftText)
+                .call()
+                .entity(ReviewResult.class); // 核心：自动转换为 Java 对象
+    }
+}
+
+```
+``` java
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import lombok.Data;
+
+@Data
+public class ReviewResult {
+
+    @JsonPropertyDescription("状态：ACCURATE 或 INACCURATE")
+    String status;
+
+    @JsonPropertyDescription("核查的详细逻辑和改进建议")
+    String reasoning;
+
+}
+
+```
+
+## 为什么在 Spring 环境下更稳健？
+强类型解析：在 Python 中，review_output 只是一个普通的字典，访问 result["status"] 如果拼错会报错。而在 Java 中，reviewResult.status() 是编译时确定的。
+
+上下文隔离：你可以为 DraftWriter 和 FactChecker 配置不同的模型。例如：生成初稿用较便宜的模型（如 DeepSeek-V3），而事实核查使用更严谨、逻辑更强的模型（如 GPT-4o 或 Qwen-Max）。
+
+易于监控：你可以轻松地在两个步骤之间插入 Spring 的监控埋点，记录每个阶段的 Token 消耗和耗时。
+
+进阶：如何增加“自我修正”？
+
+目前的流水线只到审查为止。如果要实现真正的闭环，可以增加一个判断逻辑：如果 status 是 INACCURATE，则把 reasoning 重新发给 DraftWriter 要求重写。
