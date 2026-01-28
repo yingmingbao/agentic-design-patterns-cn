@@ -297,5 +297,5 @@ eventSource.addEventListener('final', (e) => {
 
 ```
 
-## 通过将 Google ADK 的 Agent 思想 与 Spring MVC 的 SSE 机制 结合，你实际上在 Java 环境中构建了一个“可视化智能体流水线”。
+通过将 Google ADK 的 Agent 思想 与 Spring MVC 的 SSE 机制 结合，你实际上在 Java 环境中构建了一个“可视化智能体流水线”。
 
