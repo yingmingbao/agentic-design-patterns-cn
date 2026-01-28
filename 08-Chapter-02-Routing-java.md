@@ -276,4 +276,97 @@ specialRequests: "靠窗"
 
 无缝集成：提取出来的 BookingDetail 可以直接配合 Spring Data JPA 保存到数据库，实现从 AI 到业务系统的闭环。
 
+# Google ADK (Agent Development Kit) 的核心模式 多智能体协作（Multi-Agent Collaboration）的Java实现
+它通过一个父智能体（Coordinator）管理多个子智能体（Sub-Agents），每个子智能体还挂载了具体的工具（Tools）。
+在 Spring AI Alibaba 中，这种模式对应的是 Tool Calling（函数调用） 与 Hand-off（任务移交） 的组合。
+
+## 1. 定义工具 (Tools / Functions)
+
+在 Spring AI 中，工具被定义为 @Bean。我们通过 java.util.function.Function 来实现。
+``` java
+@Configuration
+public class AgentTools {
+
+    @Bean
+    @Description("处理机票和酒店预订请求") // 对应 Python 的 docstring，非常重要
+    public Function<BookingRequest, String> bookingTool() {
+        return request -> {
+            System.out.println("-------------------------- 预订工具已调用 ----------------------------");
+            return "已模拟处理预订请求：'" + request.content() + "'。";
+        };
+    }
+
+    @Bean
+    @Description("处理一般信息和百科问答请求")
+    public Function<InfoRequest, String> infoTool() {
+        return request -> {
+            System.out.println("-------------------------- 信息工具已调用 ----------------------------");
+            return "信息请求：'" + request.content() + "'。结果：模拟信息检索成功。";
+        };
+    }
+
+    // 定义输入参数 Record
+    public record BookingRequest(String content) {}
+    public record InfoRequest(String content) {}
+}
+```
+
+## 2. 实现多智能体路由逻辑
+Spring AI 目前主要通过 ChatClient 的 Advisors 和 Function Calling 来模拟 ADK 的委托机制。我们可以通过“智能体切换（Hand-off）”的思想来构建。
+``` java
+@Service
+public class MultiAgentService {
+
+    private final ChatClient chatClient;
+
+    public MultiAgentService(ChatClient.Builder builder) {
+        // 初始化时绑定工具
+        this.chatClient = builder
+                .defaultFunctions("bookingTool", "infoTool") 
+                .build();
+    }
+
+    public String runCoordinator(String userRequest) {
+        System.out.println("\n--- 协调者运行请求：'" + userRequest + "' ---");
+
+        return chatClient.prompt()
+                .system("""
+                    你是主协调者，负责分析用户请求。
+                    - 如果涉及机票或酒店预订，请必须调用 'bookingTool'。
+                    - 如果是其他信息查询或事实问答，请必须调用 'infoTool'。
+                    请直接使用工具回答，不要编造内容。
+                    """)
+                .user(userRequest)
+                .call()
+                .content();
+    }
+}
+```
+
+## 3. 主程序调用入口
+``` java
+@SpringBootApplication
+public class MultiAgentApp implements CommandLineRunner {
+
+    @Autowired
+    private MultiAgentService agentService;
+
+    public static void main(String[] args) {
+        SpringApplication.run(MultiAgentApp.class, args);
+    }
+
+    @Override
+    public void run(String... args) {
+        // 示例 A
+        System.out.println("最终输出 A: " + agentService.runCoordinator("帮我预订巴黎的酒店。"));
+
+        // 示例 B
+        System.out.println("最终输出 B: " + agentService.runCoordinator("世界最高的山峰是什么？"));
+
+        // 示例 C
+        System.out.println("最终输出 C: " + agentService.runCoordinator("说一个随机的事实。"));
+    }
+}
+
+``` 
 
