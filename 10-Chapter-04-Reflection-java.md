@@ -1,4 +1,4 @@
-# Spring AI Alibaba 实现：反思循环模式
+# Spring AI  实现：反思循环模式
 
 ## 1. 定义核心反思服务
 ``` java
@@ -104,7 +104,7 @@ Spring 的优势：在 Java 环境下，你可以很容易地在“反思阶段�
 
 
 
-# Spring AI Alibaba 实现：顺序审查流水线
+# Spring AI 实现：顺序审查流水线
 
 ``` java
 
