@@ -98,13 +98,16 @@ public class AgentRunner implements CommandLineRunner {
 
 ## 为什么 Spring AI 的实现更简洁？
 自动流水线：在 LangChain 中，你需要显式创建 AgentExecutor。在 Spring AI 中，只要在 ChatClient 中配置了 defaultFunctions，它在底层会自动执行“思考-调用-观察”的循环，直到得出最终答案。
+
 解耦与注入：工具（Function）是标准的 Spring Bean，这意味着你可以轻松地在工具中注入数据库连接、Redis 缓存或其他微服务客户端。
+
 强类型入参：Java 的 record 自动定义了工具需要的 JSON Schema。当 AI 准备调用工具时，Spring AI 会自动将 AI 生成的参数映射为 SearchRequest 对象，省去了 Python 中手动解析字符串的麻烦。
 
 
 ## 在 Spring AI Alibaba 中，为 Agent 加入记忆功能
 
 你不需要手动管理复杂的对话历史列表，只需要通过 Advisor（顾问） 机制挂载一个 ChatMemory 即可。
+
 这样，Agent 就能在后续对话中回想起之前的搜索结果（比如它刚查过的巴黎天气或伦敦人口）。
 
 实现方案：带有记忆功能的 Tool Calling Agent
@@ -179,6 +182,8 @@ public class MemoryDemo implements CommandLineRunner {
 ## 为什么这个设计更智能？
 
 自动检索上下文：MessageChatMemoryAdvisor 会在请求模型前，自动去 ChatMemory 里检索当前 chatId 下的最近 N 条对话，并把它们拼接在当前 Prompt 之前发送给 LLM。
+
 低代码侵入：你的业务逻辑方法 chat() 依然很简洁，复杂的记忆拉取和存储逻辑都被封装在 Advisor 这个“黑盒子”里了。
+
 持久化支持：如果你想把记忆存入 Redis 或数据库，只需要替换 ChatMemory 的实现类（如使用 CassandraChatMemory 或自定义实现），其他业务代码一行都不用改。
 
