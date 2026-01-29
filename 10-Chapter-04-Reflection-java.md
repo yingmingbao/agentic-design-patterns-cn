@@ -248,7 +248,9 @@ public class SelfCorrectingPipeline {
 关键架构点解析:
 
 上下文的滚动传递： 在 while 循环中，lastFeedback 扮演了关键角色。它把上一次失败的原因作为下一次生成的输入。这正是 Agent 反思模式 的精髓。
+
 避免无限循环 (Guardrail)： 代码中设置了 maxRetries。这是生产级 AI 应用必须具备的，防止因为模型陷入逻辑死循环（例如作者和审查员意见始终不一）而耗尽 Token。
+
 状态与提示词分离： 在 Spring AI 中，利用 .param() 注入变量，可以保持 Prompt 模板的整洁，避免了 Python 中字符串拼接可能导致的格式混乱。
 
 ## 3. 进阶：如何处理更复杂的逻辑？
