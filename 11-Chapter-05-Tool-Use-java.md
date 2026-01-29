@@ -100,3 +100,85 @@ public class AgentRunner implements CommandLineRunner {
 自动流水线：在 LangChain 中，你需要显式创建 AgentExecutor。在 Spring AI 中，只要在 ChatClient 中配置了 defaultFunctions，它在底层会自动执行“思考-调用-观察”的循环，直到得出最终答案。
 解耦与注入：工具（Function）是标准的 Spring Bean，这意味着你可以轻松地在工具中注入数据库连接、Redis 缓存或其他微服务客户端。
 强类型入参：Java 的 record 自动定义了工具需要的 JSON Schema。当 AI 准备调用工具时，Spring AI 会自动将 AI 生成的参数映射为 SearchRequest 对象，省去了 Python 中手动解析字符串的麻烦。
+
+
+## 在 Spring AI Alibaba 中，为 Agent 加入记忆功能
+
+你不需要手动管理复杂的对话历史列表，只需要通过 Advisor（顾问） 机制挂载一个 ChatMemory 即可。
+这样，Agent 就能在后续对话中回想起之前的搜索结果（比如它刚查过的巴黎天气或伦敦人口）。
+
+实现方案：带有记忆功能的 Tool Calling Agent
+
+## 1. 配置对话记忆 Bean
+``` java
+@Configuration
+public class AiConfig {
+    @Bean
+    public ChatMemory chatMemory() {
+        // 使用内存存储，记录最近的对话
+        return new InMemoryChatMemory();
+    }
+}
+```
+首先，我们需要一个存储容器。在开发环境下可以使用内存存储，生产环境则通常对接 Redis。
+
+## 2. 升级 Agent 服务
+
+``` java
+@Service
+public class StatefulAgentService {
+
+    private final ChatClient chatClient;
+
+    public StatefulAgentService(ChatClient.Builder builder, ChatMemory chatMemory) {
+        this.chatClient = builder
+                // 1. 绑定工具
+                .defaultFunctions("searchInformation")
+                // 2. 挂载记忆顾问，chat-id 用于区分不同用户的会话
+                .defaultAdvisors(new MessageChatMemoryAdvisor(chatMemory))
+                .build();
+    }
+
+    public String chat(String chatId, String userQuery) {
+        return chatClient.prompt()
+                .system("你是一个记性很好的助手。")
+                .user(userQuery)
+                // 传入会话 ID，这样 AI 就能找到属于该用户的历史记录
+                .advisors(a -> a.param(AbstractChatMemoryAdvisor.CHAT_ID_CONVERSATION_ID_KEY, chatId))
+                .call()
+                .content();
+    }
+}
+```
+
+## 3. 连续对话示例
+现在你的 Agent 可以处理这种带有上下文依赖的逻辑了：
+
+``` java
+@Component
+public class MemoryDemo implements CommandLineRunner {
+    @Autowired private StatefulAgentService agent;
+
+    @Override
+    public void run(String... args) {
+        String sessionId = "user-123";
+
+        // 第一轮：触发工具调用
+        System.out.println("User: 伦敦现在的天气怎么样？");
+        System.out.println("AI: " + agent.chat(sessionId, "伦敦现在的天气怎么样？"));
+        // 输出：伦敦当前天气多云，气温 15°C。
+
+        // 第二轮：依赖第一轮的记忆（指代“那里”）
+        System.out.println("\nUser: 那里的人口是多少？");
+        System.out.println("AI: " + agent.chat(sessionId, "那里的人口是多少？"));
+        // AI 会理解“那里”指代伦敦，并再次调用工具查询人口。
+    }
+}
+```
+
+## 为什么这个设计更智能？
+
+自动检索上下文：MessageChatMemoryAdvisor 会在请求模型前，自动去 ChatMemory 里检索当前 chatId 下的最近 N 条对话，并把它们拼接在当前 Prompt 之前发送给 LLM。
+低代码侵入：你的业务逻辑方法 chat() 依然很简洁，复杂的记忆拉取和存储逻辑都被封装在 Advisor 这个“黑盒子”里了。
+持久化支持：如果你想把记忆存入 Redis 或数据库，只需要替换 ChatMemory 的实现类（如使用 CassandraChatMemory 或自定义实现），其他业务代码一行都不用改。
+
