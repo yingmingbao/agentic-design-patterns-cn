@@ -60,8 +60,8 @@ spring:
 
 volcengine:
   doubao:
-    apikey: 575ffaf6-f885-4f91-997e-55226426ead2
-    model: doubao-seed-1-8-251228
+    apikey: 
+    model: 
     base-url: https://ark.cn-beijing.volces.com/api/v3
 
 # MyBatis Plus配置
