@@ -12,7 +12,12 @@ A. 配置类
 
 首先，配置 ChatClient 和基础 Bean。
 
+### GoalSettingDTO
+
 ``` java
+import com.alibaba.fastjson.JSON;
+import lombok.Data;
+
 @Data
 public class GoalSettingDTO {
     String useCase;
@@ -25,9 +30,22 @@ public class GoalSettingDTO {
         dto.useCase="Code simple to understand, Functionally correct, Handles comprehensive edge cases, Takes positive integer input only, prints the results with few examples";
         dto.maxIterations = 5;
         System.out.println(JSON.toJSONString(dto));
+
+        dto.goalsInput="Write code to count the number of files in current directory and all its nested sub directories, and print the total count";
+        dto.useCase="Code simple to understand, Functionally correct, Handles comprehensive edge cases, Ignore recommendations for performance, Ignore recommendations for test suite use like unittest or pytest";
+        System.out.println(JSON.toJSONString(dto));
+
+        dto.goalsInput="Write code which takes a command line input of a word doc or docx file and opens it and counts the number of words, and characters in it and prints all";
+        dto.useCase="Code simple to understand, Functionally correct, Handles edge cases";
+
+        System.out.println(JSON.toJSONString(dto));
+
     }
 }
-
+```
+### CodeAgentService
+ 
+``` java
 
 import create... GoalSettingDTO;
 import org.springframework.ai.chat.client.ChatClient;
