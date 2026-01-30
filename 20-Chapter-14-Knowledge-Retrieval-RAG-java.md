@@ -57,6 +57,14 @@ public class RagDataService {
 
 
 ``` java
+
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.stereotype.Service;
+
+
 @Service
 public class RagGraphService {
 
@@ -66,10 +74,10 @@ public class RagGraphService {
     public RagGraphService(ChatClient.Builder builder, VectorStore vectorStore) {
         this.vectorStore = vectorStore;
         // 使用内置的 QuestionAnswerAdvisor 替代手动节点流转
-        this.chatClient = builder
+       this.chatClient = builder
                 .defaultSystem("You are an assistant for question-answering tasks.\n" +
                         "Use the following retrieved context to answer. Maximum three sentences.")
-                .defaultAdvisors(new QuestionAnswerAdvisor(vectorStore, SearchRequest.defaults()))
+                .defaultAdvisors(new QuestionAnswerAdvisor(vectorStore, SearchRequest.builder().build()))
                 .build();
     }
 
