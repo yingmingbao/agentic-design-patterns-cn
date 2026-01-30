@@ -1,0 +1,96 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ai-patterns
+  
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema-demo_db.sql
+
+  # 数据源配置
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/demo_db?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    druid:
+      initial-size: 5
+      min-idle: 10
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      max-evictable-idle-time-millis: 900000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,wall
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  ai:
+    openai:
+      api-key:
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          max-token: 1024
+    dashscope:
+      api-key:
+      chat:
+        options:
+          model: deepseek-v3.2
+          # 百炼平台模型列表
+          enable-search: true
+          enable-thinking: true
+      read-timeout: 300000
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+
+volcengine:
+  doubao:
+    apikey: 575ffaf6-f885-4f91-997e-55226426ead2
+    model: doubao-seed-1-8-251228
+    base-url: https://ark.cn-beijing.volces.com/api/v3
+
+# MyBatis Plus配置
+mybatis-plus:
+  type-aliases-package: com.strategist.ai.entity
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: is_deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# JWT配置
+jwt:
+  # JWT密钥
+  secret: strategist-secret-key-2024-very-long-secret
+  # Token过期时间（毫秒）7天
+  expiration: 604800000
+  # Token头部标识
+  header: Authorization
+  # Token前缀
+  prefix: Bearer
+
+logging:
+  level:
+    com.strategist: debug
+    org.springframework: info
