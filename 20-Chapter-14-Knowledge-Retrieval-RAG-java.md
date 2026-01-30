@@ -5,7 +5,7 @@
        <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-redis-store-spring-boot-starter</artifactId>
-            <version>1.0.0-M5</version>
+            <version>1.0.0-M6</version>
         </dependency>
 
         <dependency>
