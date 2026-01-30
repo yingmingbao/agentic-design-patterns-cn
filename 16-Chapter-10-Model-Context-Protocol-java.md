@@ -6,7 +6,21 @@
 <dependency>
     <groupId>org.springframework.ai</groupId>
     <artifactId>spring-ai-mcp-client-spring-boot-starter</artifactId>
+    <version>1.0.0-M6</version>
 </dependency>
+
+<dependency>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-mcp-client</artifactId>
+    <version>1.0.0-M6</version>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-mcp-spring</artifactId>
+    <version>1.0.0-M6</version>
+</dependency>
+
 ```
 
 ## 2. Java 代码实现
